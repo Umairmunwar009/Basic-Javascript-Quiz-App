@@ -20,25 +20,38 @@ let questions = [],
   score = 0,
   currentQuestion,
   timer;
+  const startQuiz = () => {
+    const num = numQuestions.value,
 
-const startQuiz = () => {
-  const num = numQuestions.value,
-    cat = category.value,
-    diff = difficulty.value;
-  loadingAnimation();
-  const url = `https://opentdb.com/api.php?amount=${num}&category=${cat}&difficulty=${diff}&type=multiple`;
-  fetch(url)
-    .then((res) => res.json())
-    .then((data) => {
-      questions = data.results;
-      setTimeout(() => {
-        startScreen.classList.add("hide");
-        quiz.classList.remove("hide");
-        currentQuestion = 1;
-        showQuestion(questions[0]);
-      }, 1000);
-    });
-};
+      cat = category.value,
+      diff = difficulty.value;
+    loadingAnimation();
+
+const url = `http://localhost:3000/getQuestions?amount=${num}&category=${cat}&difficulty=${diff}`;
+let headers = new Headers();
+
+headers.append('Content-Type', 'application/json');
+headers.append('Accept', 'application/json');
+
+headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
+// headers.append('Access-Control-Allow-Credentials', 'true');
+    fetch(url,
+    {
+      "Content-Type": "text/plain"
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("🚀 ~ .then ~ data:", data)
+        questions = data;
+        setTimeout(() => {
+          startScreen.classList.add("hide");
+          quiz.classList.remove("hide");
+          currentQuestion = 1;
+          showQuestion(questions[0]);
+        }, 1000);
+      });
+  };
+  
 
 startBtn.addEventListener("click", startQuiz);
 

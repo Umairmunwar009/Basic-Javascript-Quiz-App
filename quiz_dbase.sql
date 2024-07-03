@@ -26,7 +26,8 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `options`
 --
-
+DROP TABLE `options`;
+DROP TABLE `questions`;
 CREATE TABLE `options` (
   `option_id` int(11) NOT NULL,
   `question_id` int(11) DEFAULT NULL,
@@ -97,26 +98,28 @@ CREATE TABLE `questions` (
   `question_id` int(11) NOT NULL,
   `quiz_id` int(11) DEFAULT NULL,
   `level` tinyint(1) NOT NULL DEFAULT 1,
-  `question_text` text DEFAULT NULL
+  `question_text` text DEFAULT NULL,
+  `category` text DEFAULT NULL,
+  `difficulty` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `questions`
 --
 
-INSERT INTO `questions` (`question_id`, `quiz_id`, `level`, `question_text`) VALUES
-(1, 1, 1, 'What is the output of print(2 + 3 * 4)?'),
-(2, 1, 1, 'Which of the following is an invalid variable name in Python?'),
-(3, 1, 1, 'What will be the output of the following Python code snippet?\nprint(\"Hello \" * 3)'),
-(4, 1, 1, 'How do you create an empty dictionary in Python?'),
-(5, 1, 1, 'What is the main use of Python’s `zip()` function?'),
-(6, 1, 1, 'What is the output of the following Python code snippet?\nprint(len([1, 2, 3][::-1]))'),
-(7, 1, 1, 'Which of the following statements is true about Python’s string `strip()` method?'),
-(8, 1, 1, 'What will be the output of the following Python code snippet?\nprint(\"Hello\".find(\"e\"))'),
-(9, 1, 1, 'Which of the following is not a valid comparison operator in Python?'),
-(10, 1, 1, 'What does the `enumerate()` function in Python return?'),
-(11, 1, 1, 'What is the output of the following Python code snippet?\nprint(min([1, 2, 3, 4], key=lambda x: x % 2))'),
-(12, 1, 1, 'Which of the following is true about Python’s `list()` constructor?');
+INSERT INTO `questions` (`question_id`, `quiz_id`, `level`, `question_text`,`category`,`difficulty`) VALUES
+(1, 1, 1, 'What is the output of print(2 + 3 * 4)?','10','easy'),
+(2, 1, 1, 'Which of the following is an invalid variable name in Python?','10','easy'),
+(3, 1, 1, 'What will be the output of the following Python code snippet?\nprint(\"Hello \" * 3)','10','easy'),
+(4, 1, 1, 'How do you create an empty dictionary in Python?','10','easy'),
+(5, 1, 1, 'What is the main use of Python’s `zip()` function?','10','easy'),
+(6, 1, 1, 'What is the output of the following Python code snippet?\nprint(len([1, 2, 3][::-1]))','10','easy'),
+(7, 1, 1, 'Which of the following statements is true about Python’s string `strip()` method?','10','easy'),
+(8, 1, 1, 'What will be the output of the following Python code snippet?\nprint(\"Hello\".find(\"e\"))','10','easy'),
+(9, 1, 1, 'Which of the following is not a valid comparison operator in Python?','10','easy'),
+(10, 1, 1, 'What does the `enumerate()` function in Python return?','10','easy'),
+(11, 1, 1, 'What is the output of the following Python code snippet?\nprint(min([1, 2, 3, 4], key=lambda x: x % 2))','10','easy'),
+(12, 1, 1, 'Which of the following is true about Python’s `list()` constructor?','10','easy');
 
 -- --------------------------------------------------------
 
