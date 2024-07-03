@@ -22,29 +22,48 @@ connection.connect((err) => {
 
 // Endpoint to get questions
 app.get('/getQuestions', (req, res) => {
-  console.log('Endpoint /getQuestions hit'); // Log to check if endpoint is hit
-  const num = req.query.amount || 10;
-  const cat = req.query.category || '';
-  const diff = req.query.difficulty || '';
+  const amount = req.query.amount || 5;
+  const category = req.query.category || '';
+  const difficulty = req.query.difficulty || '';
 
-  let query = 'SELECT * FROM questions WHERE 1=1';
+  let query = `
+      SELECT 
+          q.category, 
+          o.option_text AS correct_answer, 
+          q.difficulty, 
+          GROUP_CONCAT(inc.option_text) AS incorrect_answers, 
+          q.question_text AS question
+      FROM 
+          questions q
+      JOIN 
+          options o ON q.question_id = o.question_id AND o.is_correct = 1
+      JOIN 
+          options inc ON q.question_id = inc.question_id AND inc.is_correct = 0
+  `;
 
-  if (cat) {
-    query += ` AND category = '${cat}'`;
+  let conditions = [];
+  if (category) {
+      conditions.push(`q.category = ${connection.escape(category)}`);
   }
-  if (diff) {
-    query += ` AND difficulty = '${diff}'`;
+  if (difficulty) {
+      conditions.push(`q.difficulty = ${connection.escape(difficulty)}`);
   }
 
-  query += ` LIMIT ${num}`;
+  if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
+  }
 
-  connection.query(query, (error, results) => {
-    if (error) throw error;
-    console.log('Query Results:', results); // Log the results to check
-    res.json(results); // Ensure the response is in JSON format
+  query += ' GROUP BY q.question_id, q.category, o.option_text, q.difficulty, q.question_text LIMIT ?';
+console.log('query>',)
+  connection.query(query, [parseInt(amount)], (error, results) => {
+      if (error) {
+          return res.status(500).json({ error: error.message });
+      }
+      res.json(results);
   });
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(3000, () => {
+  console.log('Server running at http://localhost:3000');
 });
+

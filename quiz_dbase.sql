@@ -26,8 +26,8 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `options`
 --
-DROP TABLE `options`;
-DROP TABLE `questions`;
+-- DROP TABLE `options`;
+-- DROP TABLE `questions`;
 CREATE TABLE `options` (
   `option_id` int(11) NOT NULL,
   `question_id` int(11) DEFAULT NULL,

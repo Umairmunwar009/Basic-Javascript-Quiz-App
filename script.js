@@ -61,14 +61,13 @@ const showQuestion = (question) => {
   questionNumber = document.querySelector(".number");
 
   questionText.innerHTML = question.question;
+  const answers=question.incorrect_answers.split(',');
+  answers.push(question.correct_answer);
 
-  const answers = [
-    ...question.incorrect_answers,
-    question.correct_answer.toString(),
-  ];
   answersWrapper.innerHTML = "";
   answers.sort(() => Math.random() - 0.5);
   answers.forEach((answer) => {
+    console.log(answer)
     answersWrapper.innerHTML += `
                   <div class="answer ">
             <span class="text">${answer}</span>
