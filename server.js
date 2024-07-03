@@ -1,15 +1,18 @@
 const express = require('express');
+const cors = require('cors'); // Import cors
 const mysql = require('mysql');
 const app = express();
 const port = 3000;
 
+app.use(cors()); // Enable CORS
+
 // Database connection
 const connection = mysql.createConnection({
-    host: 'localhost',
+  host: 'localhost',
   user: 'admin',
   password: 'Admin.6825',
   database: 'my_database',
-  connectTimeout: 30000 
+  connectTimeout: 30000 // 30 seconds
 });
 
 connection.connect((err) => {
@@ -19,6 +22,7 @@ connection.connect((err) => {
 
 // Endpoint to get questions
 app.get('/getQuestions', (req, res) => {
+  console.log('Endpoint /getQuestions hit'); // Log to check if endpoint is hit
   const num = req.query.amount || 10;
   const cat = req.query.category || '';
   const diff = req.query.difficulty || '';
@@ -36,7 +40,8 @@ app.get('/getQuestions', (req, res) => {
 
   connection.query(query, (error, results) => {
     if (error) throw error;
-    return res.json(results);
+    console.log('Query Results:', results); // Log the results to check
+    res.json(results); // Ensure the response is in JSON format
   });
 });
 
