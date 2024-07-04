@@ -77,9 +77,6 @@ const showQuestion = (question) => {
   
   answersDiv.forEach((answer) => {
     answer.addEventListener("click", () => {
-      if (correctAnswers.length === 1) {
-        answersDiv.forEach((ans) => ans.classList.remove("selected"));
-      }
       answer.classList.toggle("selected");
       submitBtn.disabled = false;
     });
@@ -173,6 +170,7 @@ const checkAnswer = () => {
 
   const correctAnswers = questions[currentQuestion - 1].correct_answers;
 
+  // Check if the selected answers are correct
   const isCorrect =
     correctAnswers.length === selectedAnswerTexts.length &&
     correctAnswers.every((answer) => selectedAnswerTexts.includes(answer));
@@ -184,10 +182,14 @@ const checkAnswer = () => {
     });
   } else {
     selectedAnswers.forEach((answer) => {
-      answer.classList.add("wrong");
+      if (correctAnswers.includes(answer.querySelector(".text").innerHTML)) {
+        answer.classList.add("correct");
+      } else {
+        answer.classList.add("wrong");
+      }
     });
     document.querySelectorAll(".answer").forEach((answerElement) => {
-      if (correctAnswers.includes(answerElement.querySelector(".text").innerHTML)) {
+      if (correctAnswers.includes(answerElement.querySelector(".text").innerHTML) && !answerElement.classList.contains("selected")) {
         answerElement.classList.add("correct");
       }
     });
@@ -200,6 +202,7 @@ const checkAnswer = () => {
   submitBtn.style.display = "none";
   nextBtn.style.display = "block";
 };
+
 
 const nextQuestion = () => {
   if (currentQuestion < questions.length) {
