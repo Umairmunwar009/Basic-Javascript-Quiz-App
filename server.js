@@ -31,18 +31,18 @@ app.get('/getQuestions', (req, res) => {
   const amount = req.query.amount || 5;
 
   let query = `
-  SELECT 
-      q.question_text AS question,
-      JSON_ARRAYAGG(CASE WHEN o.is_correct = 1 THEN o.option_text ELSE NULL END) AS correct_answers, 
-      JSON_ARRAYAGG(CASE WHEN o.is_correct = 0 THEN o.option_text ELSE NULL END) AS incorrect_answers
-  FROM 
-      questions q
-  JOIN 
-      options o ON q.question_id = o.question_id
-  GROUP BY 
-      q.question_id, q.question_text
-  LIMIT ?;
-`;
+SELECT 
+    q.question_text AS question,
+    CONCAT('[', GROUP_CONCAT(CASE WHEN o.is_correct = 1 THEN JSON_QUOTE(o.option_text) ELSE NULL END SEPARATOR ','), ']') AS correct_answers, 
+    CONCAT('[', GROUP_CONCAT(CASE WHEN o.is_correct = 0 THEN JSON_QUOTE(o.option_text) ELSE NULL END SEPARATOR ','), ']') AS incorrect_answers
+FROM 
+    questions q
+JOIN 
+    options o ON q.question_id = o.question_id
+GROUP BY 
+    q.question_id, q.question_text
+LIMIT ?;
+`
   connection.query(query, [parseInt(amount)], (error, results) => {
     if (error) {
       return res.status(500).json({ error: error.message });
