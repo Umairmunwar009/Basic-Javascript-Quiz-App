@@ -139,9 +139,16 @@ submitBtn.addEventListener("click", () => {
   checkAnswer();
 });
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('http://localhost:3000/getQuizDetails')
+  const urlParams = new URLSearchParams(window.location.search);
+  const quizId = urlParams.get('quiz_id') || 1; // Default to quiz_id=1 if not provided
+
+  const fetchUrl = `http://localhost:3000/getQuizDetails?quiz_id=${quizId}`;
+  console.log('Fetching details from URL:', fetchUrl);
+
+  fetch(fetchUrl)
       .then(response => response.json())
       .then(data => {
+          console.log('Fetched Data:', data);
           document.title = data.quiz_name; // Update the document title
           document.querySelectorAll('.heading').forEach(element => {
               element.textContent = data.quiz_name; // Update all elements with class 'heading'
@@ -154,6 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
           console.error('Error fetching quiz details:', error);
       });
 });
+
+
+
 
 nextBtn.addEventListener("click", () => {
   nextQuestion();

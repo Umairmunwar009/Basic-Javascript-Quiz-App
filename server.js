@@ -18,22 +18,13 @@ connection.connect((err) => {
   if (err) throw err;
   console.log('Connected to the database!');
 });
-app.get('/getQuizDetails', (req, res) => {
-    const query = 'SELECT quiz_name, description FROM quiz WHERE quiz_id = 1'; // Assuming you have only one quiz
-    connection.query(query, (error, results) => {
-        if (error) {
-            return res.status(500).json({ error: error.message });
-        }
-        res.json(results[0]);
-    });
-});
 app.get('/getQuestions', (req, res) => {
   const amount = req.query.amount || 5;
 
   let query = `
 SELECT 
     q.question_text AS question,
-    CONCAT('[', GROUP_CONCAT(CASE WHEN o.is_correct = 1 THEN JSON_QUOTE(o.option_text) ELSE NULL END SEPARATOR ','), ']') AS correct_answers, 
+    CONCAT('[', GROUP_CONCAT(CASE WHEN o.is_correct = 1 THEN JSON_QUOTE(o.option_text) ELSE NULL END SEPARATOR ','), ']') AS correct_answers,
     CONCAT('[', GROUP_CONCAT(CASE WHEN o.is_correct = 0 THEN JSON_QUOTE(o.option_text) ELSE NULL END SEPARATOR ','), ']') AS incorrect_answers
 FROM 
     questions q
@@ -59,16 +50,24 @@ LIMIT ?;
   });
 });
 app.get('/getQuizDetails', (req, res) => {
-  const query = 'SELECT quiz_name, description FROM quiz WHERE quiz_id = 1'; // Assuming you have only one quiz
-  connection.query(query, (error, results) => {
+  const quizId = req.query.quiz_id;
+  console.log('Received quiz_id:', quizId);  // Log the received quiz_id
+  const query = 'SELECT quiz_name, description FROM quiz WHERE quiz_id = ?';
+  connection.query(query, [quizId], (error, results) => {
       if (error) {
+          console.error('Error executing query:', error);
           return res.status(500).json({ error: error.message });
       }
-      res.json(results[0]);
+      console.log('Executed query with quiz_id:', quizId);
+      console.log('Query Results:', results);
+      if (results.length > 0) {
+          res.json(results[0]);
+      } else {
+          res.status(404).json({ error: 'Quiz not found' });
+      }
   });
 });
 
-
-app.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}/`);
 });
