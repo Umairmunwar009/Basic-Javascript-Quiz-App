@@ -58,6 +58,16 @@ app.get('/getQuestions', (req, res) => {
     res.json(filteredResults);
   });
 });
+app.get('/getQuizDetails', (req, res) => {
+  const query = 'SELECT quiz_name, description FROM quiz WHERE quiz_id = 1'; // Assuming you have only one quiz
+  connection.query(query, (error, results) => {
+      if (error) {
+          return res.status(500).json({ error: error.message });
+      }
+      res.json(results[0]);
+  });
+});
+
 
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000');

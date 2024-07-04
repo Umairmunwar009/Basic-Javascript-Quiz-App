@@ -141,6 +141,22 @@ const submitBtn = document.querySelector(".submit"),
 submitBtn.addEventListener("click", () => {
   checkAnswer();
 });
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('http://localhost:3000/getQuizDetails')
+      .then(response => response.json())
+      .then(data => {
+          document.title = data.quiz_name; // Update the document title
+          document.querySelectorAll('.heading').forEach(element => {
+              element.textContent = data.quiz_name; // Update all elements with class 'heading'
+          });
+          document.querySelectorAll('.description').forEach(element => {
+              element.textContent = data.description; // Update all elements with class 'description'
+          });
+      })
+      .catch(error => {
+          console.error('Error fetching quiz details:', error);
+      });
+});
 
 nextBtn.addEventListener("click", () => {
   nextQuestion();
