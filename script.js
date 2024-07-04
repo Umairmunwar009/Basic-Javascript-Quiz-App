@@ -20,38 +20,28 @@ let questions = [],
   score = 0,
   currentQuestion,
   timer;
-  const startQuiz = () => {
-    const num = numQuestions.value,
 
-      cat = category.value,
-      diff = difficulty.value;
-    loadingAnimation();
+const startQuiz = () => {
+  const num = numQuestions.value,
+    cat = category.value,
+    diff = difficulty.value;
+  loadingAnimation();
 
-const url = `http://localhost:3000/getQuestions?amount=${num}&category=${cat}&difficulty=${diff}`;
-let headers = new Headers();
+  const url = `http://localhost:3000/getQuestions?amount=${num}&category=${cat}&difficulty=${diff}`;
 
-headers.append('Content-Type', 'application/json');
-headers.append('Accept', 'application/json');
-
-headers.append('Access-Control-Allow-Origin', 'http://localhost:3000');
-// headers.append('Access-Control-Allow-Credentials', 'true');
-    fetch(url,
-    {
-      "Content-Type": "text/plain"
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("🚀 ~ .then ~ data:", data)
-        questions = data;
-        setTimeout(() => {
-          startScreen.classList.add("hide");
-          quiz.classList.remove("hide");
-          currentQuestion = 1;
-          showQuestion(questions[0]);
-        }, 1000);
-      });
-  };
-  
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Fetched Data:", data);
+      questions = data;
+      setTimeout(() => {
+        startScreen.classList.add("hide");
+        quiz.classList.remove("hide");
+        currentQuestion = 1;
+        showQuestion(questions[0]);
+      }, 1000);
+    });
+};
 
 startBtn.addEventListener("click", startQuiz);
 
@@ -61,41 +51,40 @@ const showQuestion = (question) => {
   questionNumber = document.querySelector(".number");
 
   questionText.innerHTML = question.question;
-  const answers=question.incorrect_answers.split(',');
-  answers.push(question.correct_answer);
+  const answers = [...question.incorrect_answers, ...question.correct_answers];
+  console.log("🚀 ~ showQuestion ~ answers:", answers)
 
   answersWrapper.innerHTML = "";
   answers.sort(() => Math.random() - 0.5);
   answers.forEach((answer) => {
-    console.log(answer)
     answersWrapper.innerHTML += `
-                  <div class="answer ">
-            <span class="text">${answer}</span>
-            <span class="checkbox">
-              <i class="fas fa-check"></i>
-            </span>
-          </div>
-        `;
+      <div class="answer">
+        <span class="text">${answer}</span>
+        <span class="checkbox">
+          <i class="fas fa-check"></i>
+        </span>
+      </div>
+    `;
   });
 
   questionNumber.innerHTML = ` Question <span class="current">${
     questions.indexOf(question) + 1
   }</span>
-            <span class="total">/${questions.length}</span>`;
-  //add event listener to each answer
+  <span class="total">/${questions.length}</span>`;
+
   const answersDiv = document.querySelectorAll(".answer");
+  const correctAnswers = question.correct_answers;
+  
   answersDiv.forEach((answer) => {
     answer.addEventListener("click", () => {
-      if (!answer.classList.contains("checked")) {
-        answersDiv.forEach((answer) => {
-          answer.classList.remove("selected");
-        });
-        answer.classList.add("selected");
-        submitBtn.disabled = false;
+      if (correctAnswers.length === 1) {
+        answersDiv.forEach((ans) => ans.classList.remove("selected"));
       }
+      answer.classList.toggle("selected");
+      submitBtn.disabled = false;
     });
   });
-
+  
   time = timePerQuestion.value;
   startTimer(time);
 };
@@ -103,7 +92,9 @@ const showQuestion = (question) => {
 const startTimer = (time) => {
   timer = setInterval(() => {
     if (time === 3) {
-      playAdudio("countdown.mp3");
+      progress(time);
+      time--;
+      playAudio("countdown.mp3");
     }
     if (time >= 0) {
       progress(time);
@@ -124,6 +115,7 @@ const loadingAnimation = () => {
     }
   }, 500);
 };
+
 function defineProperty() {
   var osccred = document.createElement("div");
   osccred.innerHTML =
@@ -158,40 +150,34 @@ nextBtn.addEventListener("click", () => {
 
 const checkAnswer = () => {
   clearInterval(timer);
-  const selectedAnswer = document.querySelector(".answer.selected");
-  if (selectedAnswer) {
-    const answer = selectedAnswer.querySelector(".text").innerHTML;
-    console.log(currentQuestion);
-    if (answer === questions[currentQuestion - 1].correct_answer) {
-      score++;
-      selectedAnswer.classList.add("correct");
-    } else {
-      selectedAnswer.classList.add("wrong");
-      const correctAnswer = document
-        .querySelectorAll(".answer")
-        .forEach((answer) => {
-          if (
-            answer.querySelector(".text").innerHTML ===
-            questions[currentQuestion - 1].correct_answer
-          ) {
-            answer.classList.add("correct");
-          }
-        });
-    }
+  const selectedAnswers = document.querySelectorAll(".answer.selected");
+  const selectedAnswerTexts = Array.from(selectedAnswers).map(
+    (answer) => answer.querySelector(".text").innerHTML
+  );
+
+  const correctAnswers = questions[currentQuestion - 1].correct_answers;
+
+  const isCorrect =
+    correctAnswers.length === selectedAnswerTexts.length &&
+    correctAnswers.every((answer) => selectedAnswerTexts.includes(answer));
+
+  if (isCorrect) {
+    score++;
+    selectedAnswers.forEach((answer) => {
+      answer.classList.add("correct");
+    });
   } else {
-    const correctAnswer = document
-      .querySelectorAll(".answer")
-      .forEach((answer) => {
-        if (
-          answer.querySelector(".text").innerHTML ===
-          questions[currentQuestion - 1].correct_answer
-        ) {
-          answer.classList.add("correct");
-        }
-      });
+    selectedAnswers.forEach((answer) => {
+      answer.classList.add("wrong");
+    });
+    document.querySelectorAll(".answer").forEach((answerElement) => {
+      if (correctAnswers.includes(answerElement.querySelector(".text").innerHTML)) {
+        answerElement.classList.add("correct");
+      }
+    });
   }
-  const answersDiv = document.querySelectorAll(".answer");
-  answersDiv.forEach((answer) => {
+
+  document.querySelectorAll(".answer").forEach((answer) => {
     answer.classList.add("checked");
   });
 
@@ -208,22 +194,17 @@ const nextQuestion = () => {
   }
 };
 
-const endScreen = document.querySelector(".end-screen"),
-  finalScore = document.querySelector(".final-score"),
-  totalScore = document.querySelector(".total-score");
 const showScore = () => {
-  endScreen.classList.remove("hide");
   quiz.classList.add("hide");
+  endScreen.classList.remove("hide");
   finalScore.innerHTML = score;
   totalScore.innerHTML = `/ ${questions.length}`;
 };
-
 const restartBtn = document.querySelector(".restart");
 restartBtn.addEventListener("click", () => {
   window.location.reload();
 });
 
-const playAdudio = (src) => {
-  const audio = new Audio(src);
-  audio.play();
-};
+const endScreen = document.querySelector(".end-screen"),
+  finalScore = document.querySelector(".final-score"),
+  totalScore = document.querySelector(".total-score");

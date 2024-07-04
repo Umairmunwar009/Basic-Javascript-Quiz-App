@@ -1,46 +1,74 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
+-- MySQL dump 10.13  Distrib 8.0.37, for Linux (x86_64)
 --
--- Host: 127.0.0.1
--- Generation Time: Jul 01, 2024 at 03:33 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Host: localhost    Database: my_database
+-- ------------------------------------------------------
+-- Server version	8.0.37-0ubuntu0.20.04.3
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */
+;
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */
+;
 
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */
+;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!50503 SET NAMES utf8mb4 */
+;
 
---
--- Database: `quiz_dbase`
---
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */
+;
 
--- --------------------------------------------------------
+/*!40103 SET TIME_ZONE='+00:00' */
+;
+
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */
+;
+
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */
+;
+
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */
+;
+
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */
+;
 
 --
 -- Table structure for table `options`
 --
--- DROP TABLE `options`;
--- DROP TABLE `questions`;
+DROP TABLE IF EXISTS `options`;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */
+;
+
+/*!50503 SET character_set_client = utf8mb4 */
+;
+
 CREATE TABLE `options` (
-  `option_id` int(11) NOT NULL,
-  `question_id` int(11) DEFAULT NULL,
-  `option_text` text DEFAULT NULL,
-  `is_correct` tinyint(1) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `option_id` int NOT NULL AUTO_INCREMENT,
+  `question_id` int DEFAULT NULL,
+  `option_text` text COLLATE utf8mb4_general_ci,
+  `is_correct` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`option_id`),
+  KEY `question_id` (`question_id`),
+  CONSTRAINT `options_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 48 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+/*!40101 SET character_set_client = @saved_cs_client */
+;
 
 --
 -- Dumping data for table `options`
 --
+LOCK TABLES `options` WRITE;
 
-INSERT INTO `options` (`option_id`, `question_id`, `option_text`, `is_correct`) VALUES
-(1, 1, '14', 0),
+/*!40000 ALTER TABLE `options` DISABLE KEYS */
+;
+
+INSERT INTO
+  `options`
+VALUES
+  (1, 1, '14', 1),
 (2, 1, '20', 1),
 (3, 1, 'Error', 0),
 (4, 1, '23', 0),
@@ -55,7 +83,12 @@ INSERT INTO `options` (`option_id`, `question_id`, `option_text`, `is_correct`) 
 (13, 4, 'dict()', 1),
 (14, 4, 'None', 0),
 (15, 4, '0', 0),
-(16, 5, 'Combining two or more sequences into a single sequence of tuples', 1),
+(
+    16,
+    5,
+    'Combining two or more sequences into a single sequence of tuples',
+    1
+  ),
 (17, 5, 'Sorting a sequence', 0),
 (18, 5, 'Filtering a sequence', 0),
 (19, 5, 'None of the above', 0),
@@ -63,7 +96,12 @@ INSERT INTO `options` (`option_id`, `question_id`, `option_text`, `is_correct`) 
 (21, 6, '3', 0),
 (22, 6, '0', 0),
 (23, 6, 'Error', 0),
-(24, 7, 'Removes all occurrences of a character from the string', 0),
+(
+    24,
+    7,
+    'Removes all occurrences of a character from the string',
+    0
+  ),
 (25, 7, 'Removes leading and trailing whitespace', 1),
 (26, 7, 'Removes leading whitespace', 0),
 (27, 7, 'Removes trailing whitespace', 0),
@@ -75,7 +113,12 @@ INSERT INTO `options` (`option_id`, `question_id`, `option_text`, `is_correct`) 
 (33, 9, '==', 1),
 (34, 9, '<=', 0),
 (35, 9, '>=', 0),
-(36, 10, 'A list of tuples containing indices and items', 1),
+(
+    36,
+    10,
+    'A list of tuples containing indices and items',
+    1
+  ),
 (37, 10, 'A list containing only the indices', 0),
 (38, 10, 'A list containing only the items', 0),
 (39, 10, 'None of the above', 0),
@@ -88,121 +131,215 @@ INSERT INTO `options` (`option_id`, `question_id`, `option_text`, `is_correct`) 
 (46, 12, '[1, 2]', 0),
 (47, 12, 'None of the above', 0);
 
--- --------------------------------------------------------
+/*!40000 ALTER TABLE `options` ENABLE KEYS */
+;
+
+UNLOCK TABLES;
 
 --
 -- Table structure for table `questions`
 --
+DROP TABLE IF EXISTS `questions`;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */
+;
+
+/*!50503 SET character_set_client = utf8mb4 */
+;
 
 CREATE TABLE `questions` (
-  `question_id` int(11) NOT NULL,
-  `quiz_id` int(11) DEFAULT NULL,
-  `level` tinyint(1) NOT NULL DEFAULT 1,
-  `question_text` text DEFAULT NULL,
-  `category` text DEFAULT NULL,
-  `difficulty` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `question_id` int NOT NULL AUTO_INCREMENT,
+  `quiz_id` int DEFAULT NULL,
+  `level` tinyint(1) NOT NULL DEFAULT '1',
+  `question_text` text COLLATE utf8mb4_general_ci,
+  `category` text COLLATE utf8mb4_general_ci,
+  `difficulty` text COLLATE utf8mb4_general_ci,
+  PRIMARY KEY (`question_id`),
+  KEY `quiz_id` (`quiz_id`),
+  CONSTRAINT `questions_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`quiz_id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 13 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+/*!40101 SET character_set_client = @saved_cs_client */
+;
 
 --
 -- Dumping data for table `questions`
 --
+LOCK TABLES `questions` WRITE;
 
-INSERT INTO `questions` (`question_id`, `quiz_id`, `level`, `question_text`,`category`,`difficulty`) VALUES
-(1, 1, 1, 'What is the output of print(2 + 3 * 4)?','10','easy'),
-(2, 1, 1, 'Which of the following is an invalid variable name in Python?','10','easy'),
-(3, 1, 1, 'What will be the output of the following Python code snippet?\nprint(\"Hello \" * 3)','10','easy'),
-(4, 1, 1, 'How do you create an empty dictionary in Python?','10','easy'),
-(5, 1, 1, 'What is the main use of Python’s `zip()` function?','10','easy'),
-(6, 1, 1, 'What is the output of the following Python code snippet?\nprint(len([1, 2, 3][::-1]))','10','easy'),
-(7, 1, 1, 'Which of the following statements is true about Python’s string `strip()` method?','10','easy'),
-(8, 1, 1, 'What will be the output of the following Python code snippet?\nprint(\"Hello\".find(\"e\"))','10','easy'),
-(9, 1, 1, 'Which of the following is not a valid comparison operator in Python?','10','easy'),
-(10, 1, 1, 'What does the `enumerate()` function in Python return?','10','easy'),
-(11, 1, 1, 'What is the output of the following Python code snippet?\nprint(min([1, 2, 3, 4], key=lambda x: x % 2))','10','easy'),
-(12, 1, 1, 'Which of the following is true about Python’s `list()` constructor?','10','easy');
+/*!40000 ALTER TABLE `questions` DISABLE KEYS */
+;
 
--- --------------------------------------------------------
+INSERT INTO
+  `questions`
+VALUES
+  (
+    1,
+    1,
+    1,
+    'What is the output of print(2 + 3 * 4)?',
+    '10',
+    'easy'
+  ),
+(
+    2,
+    1,
+    1,
+    'Which of the following is an invalid variable name in Python?',
+    '10',
+    'easy'
+  ),
+(
+    3,
+    1,
+    1,
+    'What will be the output of the following Python code snippet?\nprint(\"Hello \" * 3)',
+    '10',
+    'easy'
+  ),
+(
+    4,
+    1,
+    1,
+    'How do you create an empty dictionary in Python?',
+    '10',
+    'easy'
+  ),
+(
+    5,
+    1,
+    1,
+    'What is the main use of Python’s `zip()` function?',
+    '10',
+    'easy'
+  ),
+(
+    6,
+    1,
+    1,
+    'What is the output of the following Python code snippet?\nprint(len([1, 2, 3][::-1]))',
+    '10',
+    'easy'
+  ),
+(
+    7,
+    1,
+    1,
+    'Which of the following statements is true about Python’s string `strip()` method?',
+    '10',
+    'easy'
+  ),
+(
+    8,
+    1,
+    1,
+    'What will be the output of the following Python code snippet?\nprint(\"Hello\".find(\"e\"))',
+    '10',
+    'easy'
+  ),
+(
+    9,
+    1,
+    1,
+    'Which of the following is not a valid comparison operator in Python?',
+    '10',
+    'easy'
+  ),
+(
+    10,
+    1,
+    1,
+    'What does the `enumerate()` function in Python return?',
+    '10',
+    'easy'
+  ),
+(
+    11,
+    1,
+    1,
+    'What is the output of the following Python code snippet?\nprint(min([1, 2, 3, 4], key=lambda x: x % 2))',
+    '10',
+    'easy'
+  ),
+(
+    12,
+    1,
+    1,
+    'Which of the following is true about Python’s `list()` constructor?',
+    '10',
+    'easy'
+  );
+
+/*!40000 ALTER TABLE `questions` ENABLE KEYS */
+;
+
+UNLOCK TABLES;
 
 --
 -- Table structure for table `quiz`
 --
+DROP TABLE IF EXISTS `quiz`;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */
+;
+
+/*!50503 SET character_set_client = utf8mb4 */
+;
 
 CREATE TABLE `quiz` (
-  `quiz_id` int(11) NOT NULL,
-  `quiz_name` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `quiz_id` int NOT NULL AUTO_INCREMENT,
+  `quiz_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `description` text COLLATE utf8mb4_general_ci,
+  PRIMARY KEY (`quiz_id`)
+) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+/*!40101 SET character_set_client = @saved_cs_client */
+;
 
 --
 -- Dumping data for table `quiz`
 --
+LOCK TABLES `quiz` WRITE;
 
-INSERT INTO `quiz` (`quiz_id`, `quiz_name`, `description`) VALUES
-(1, 'Python Quiz', 'A quiz to test your knowledge of Python programming.');
+/*!40000 ALTER TABLE `quiz` DISABLE KEYS */
+;
 
---
--- Indexes for dumped tables
---
+INSERT INTO
+  `quiz`
+VALUES
+  (
+    1,
+    'Python Quiz',
+    'A quiz to test your knowledge of Python programming.'
+  );
 
---
--- Indexes for table `options`
---
-ALTER TABLE `options`
-  ADD PRIMARY KEY (`option_id`),
-  ADD KEY `question_id` (`question_id`);
+/*!40000 ALTER TABLE `quiz` ENABLE KEYS */
+;
 
---
--- Indexes for table `questions`
---
-ALTER TABLE `questions`
-  ADD PRIMARY KEY (`question_id`),
-  ADD KEY `quiz_id` (`quiz_id`);
+UNLOCK TABLES;
 
---
--- Indexes for table `quiz`
---
-ALTER TABLE `quiz`
-  ADD PRIMARY KEY (`quiz_id`);
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */
+;
 
---
--- AUTO_INCREMENT for dumped tables
---
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */
+;
 
---
--- AUTO_INCREMENT for table `options`
---
-ALTER TABLE `options`
-  MODIFY `option_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */
+;
 
---
--- AUTO_INCREMENT for table `questions`
---
-ALTER TABLE `questions`
-  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */
+;
 
---
--- AUTO_INCREMENT for table `quiz`
---
-ALTER TABLE `quiz`
-  MODIFY `quiz_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */
+;
 
---
--- Constraints for dumped tables
---
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */
+;
 
---
--- Constraints for table `options`
---
-ALTER TABLE `options`
-  ADD CONSTRAINT `options_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`question_id`);
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */
+;
 
---
--- Constraints for table `questions`
---
-ALTER TABLE `questions`
-  ADD CONSTRAINT `questions_ibfk_1` FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`quiz_id`);
-COMMIT;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */
+;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- Dump completed on 2024-07-04 11:15:11
