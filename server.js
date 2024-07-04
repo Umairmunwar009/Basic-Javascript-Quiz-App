@@ -18,39 +18,31 @@ connection.connect((err) => {
   if (err) throw err;
   console.log('Connected to the database!');
 });
-
+app.get('/getQuizDetails', (req, res) => {
+    const query = 'SELECT quiz_name, description FROM quiz WHERE quiz_id = 1'; // Assuming you have only one quiz
+    connection.query(query, (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+        res.json(results[0]);
+    });
+});
 app.get('/getQuestions', (req, res) => {
   const amount = req.query.amount || 5;
-  const category = req.query.category || '';
-  const difficulty = req.query.difficulty || '';
 
   let query = `
-    SELECT 
-        q.category, 
-        JSON_ARRAYAGG(CASE WHEN o.is_correct = 1 THEN o.option_text ELSE NULL END) AS correct_answers, 
-        q.difficulty, 
-        JSON_ARRAYAGG(CASE WHEN o.is_correct = 0 THEN o.option_text ELSE NULL END) AS incorrect_answers, 
-        q.question_text AS question
-    FROM 
-        questions q
-    JOIN 
-        options o ON q.question_id = o.question_id
-  `;
-
-  let conditions = [];
-  if (category) {
-    conditions.push(`q.category = ${connection.escape(category)}`);
-  }
-  if (difficulty) {
-    conditions.push(`q.difficulty = ${connection.escape(difficulty)}`);
-  }
-
-  if (conditions.length > 0) {
-    query += ' WHERE ' + conditions.join(' AND ');
-  }
-
-  query += ' GROUP BY q.question_id, q.category, q.difficulty, q.question_text LIMIT ?';
-
+  SELECT 
+      q.question_text AS question,
+      JSON_ARRAYAGG(CASE WHEN o.is_correct = 1 THEN o.option_text ELSE NULL END) AS correct_answers, 
+      JSON_ARRAYAGG(CASE WHEN o.is_correct = 0 THEN o.option_text ELSE NULL END) AS incorrect_answers
+  FROM 
+      questions q
+  JOIN 
+      options o ON q.question_id = o.question_id
+  GROUP BY 
+      q.question_id, q.question_text
+  LIMIT ?;
+`;
   connection.query(query, [parseInt(amount)], (error, results) => {
     if (error) {
       return res.status(500).json({ error: error.message });

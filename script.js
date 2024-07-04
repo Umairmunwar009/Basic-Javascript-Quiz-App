@@ -11,20 +11,20 @@ const startBtn = document.querySelector(".start"),
   numQuestions = document.querySelector("#num-questions"),
   category = document.querySelector("#category"),
   difficulty = document.querySelector("#difficulty"),
-  timePerQuestion = document.querySelector("#time"),
   quiz = document.querySelector(".quiz"),
   startScreen = document.querySelector(".start-screen");
 
-let questions = [],
-  time = 30,
-  score = 0,
-  currentQuestion,
-  timer;
+let questions = []
 
+
+const timePerQuestion = 30;
+const num = 10; // Default number of questions
+const cat = ""; // Default category (any)
+const diff = ""; // Default difficulty (any)
+let score = 0;
+let  timer;
 const startQuiz = () => {
-  const num = numQuestions.value,
-    cat = category.value,
-    diff = difficulty.value;
+
   loadingAnimation();
 
   const url = `http://localhost:3000/getQuestions?amount=${num}&category=${cat}&difficulty=${diff}`;
@@ -85,7 +85,7 @@ const showQuestion = (question) => {
     });
   });
   
-  time = timePerQuestion.value;
+  time = timePerQuestion;
   startTimer(time);
 };
 
