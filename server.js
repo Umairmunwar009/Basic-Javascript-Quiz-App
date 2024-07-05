@@ -19,6 +19,8 @@ connection.connect((err) => {
   console.log('Connected to the database!');
 });
 app.get('/getQuestions', (req, res) => {
+  const quizId = req.query.quizId;
+  console.log("🚀 ~ app.get ~ req:", quizId)
   const amount = req.query.amount || 5;
 
   let query = `
@@ -30,6 +32,7 @@ FROM
     questions q
 JOIN 
     options o ON q.question_id = o.question_id
+    WHERE quiz_id=${quizId}
 GROUP BY 
     q.question_id, q.question_text
 LIMIT ?;

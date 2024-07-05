@@ -24,10 +24,11 @@ const diff = ""; // Default difficulty (any)
 let score = 0;
 let  timer;
 const startQuiz = () => {
-
+  const urlParams = new URLSearchParams(window.location.search);
+  const quizId = urlParams.get('quiz_id') || 1; // Default to quiz_id=1 if not provided
+  console.log("🚀 ~ startQuiz ~ quizId:", quizId)
   loadingAnimation();
-
-  const url = `http://localhost:3000/getQuestions?amount=${num}&category=${cat}&difficulty=${diff}`;
+  const url = `http://localhost:3000/getQuestions?quizId=${quizId}`;
 
   fetch(url)
     .then((res) => res.json())
